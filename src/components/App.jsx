@@ -1,16 +1,83 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
+import contacts from './data/contacts.json';
+import { nanoid } from 'nanoid';
+import { Component } from 'react';
+import { PhoneBook } from './PhoneBook/PhoneBook';
+import { ContactsList } from './ContactsList/ContactsList';
+import ContactForm from './ContactForm/ContactForm.jsx';
+import { Filter } from './Filter/Filter';
+
+export class App extends Component {
+  state = {
+    contacts: contacts,
+    filter: '',}
+  
+  deleteContact = id => {
+  console.log(contacts)
+    this.setState({ contacts: this.state.contacts.filter(contact => contact.id !== id) });
+  }  
+  addNewContact = ({ name, number, contactIsList }) => {
+    const newNameToLowerCase = name.toLowerCase();
+    const { contacts } = this.state;
+    
+contacts.forEach(contact => {
+      if (contact.name.toLowerCase() === newNameToLowerCase && contact.number === number) {
+        alert(`${contact.name}: ${contact.number} is already in contacts`)
+        contactIsList = true;
+        return;
+      }
+      if (contact.number === number) {
+        alert(`${contact.number} existed in contact ${contact.name}`)
+        contactIsList = true;
+        return;
+      }
+    });
+
+if (contactIsList) {
+      return;
+    }
+    const newContact = {
+      id: nanoid(),
+      name: name,
+      number: number,
+    };
+
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, newContact],
+    }));
+  };
+  valueInputFilter = event => {
+       console.log(event.target.value)
+      this.setState({ filter: event.target.value });
+    };
+  visibleContacts = () => {
+    const { filter, contacts } = this.state;
+    const seekLetterOfFilter = filter.toLowerCase();
+    
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(seekLetterOfFilter)
+    );
+  };
+
+
+  render()  {
+
+    const { filter } = this.state;
+    const visibleContacts = this.visibleContacts();
+   return(
+     <div style={{
+        margin: '0px auto' ,
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+        color: '#010101',
+        boxShadow: '0 0 10px #b4b3b3',
+        backgroundColor: 'rgb(230, 231, 234)',
+        width: '500px',
+      }}>
+       < PhoneBook message={"Phonebook"} />
+       < ContactForm onSubmit={this.addNewContact} />
+       < Filter value={filter} onChange={this.valueInputFilter} />
+       < ContactsList contacts={visibleContacts} deleteContact={this.deleteContact} />
+       
+      </div>
+  
+  ) }  }
