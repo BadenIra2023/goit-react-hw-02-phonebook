@@ -12,15 +12,14 @@ export class App extends Component {
     filter: '',}
   
   deleteContact = id => {
-  console.log(contacts)
     this.setState({ contacts: this.state.contacts.filter(contact => contact.id !== id) });
-  }  
+  } 
+ 
   addNewContact = ({ name, number, contactIsList }) => {
     const newNameToLowerCase = name.toLowerCase();
     const { contacts } = this.state;
-    
-contacts.forEach(contact => {
-      if (contact.name.toLowerCase() === newNameToLowerCase && contact.number === number) {
+    contacts.forEach(contact => {
+      if (contact.name.toLowerCase() === newNameToLowerCase || contact.number === number) {
         alert(`${contact.name}: ${contact.number} is already in contacts`)
         contactIsList = true;
         return;
@@ -46,7 +45,6 @@ if (contactIsList) {
     }));
   };
   valueInputFilter = event => {
-       console.log(event.target.value)
       this.setState({ filter: event.target.value });
     };
   visibleContacts = () => {
